@@ -1,25 +1,42 @@
-import logo from './logo.svg';
+import { lazy, Suspense } from 'react';
+import { Switch, Route } from 'react-router-dom';
+import Loader from 'react-loader-spinner';
+import AppBar from './components/AppBar/AppBar';
 import './App.css';
 
-function App() {
+const HomeView = lazy(() => import('./views/HomeView.js'));
+const MoviesView = lazy(() => import('./views/MoviesView.js'));
+const MovieView = lazy(() => import('./views/MovieView.js'));
+const NotFoundView = lazy(() => import('./views/NotFoundView.js'));
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <AppBar />
+
+      <Suspense
+        fallback={
+          <Loader type="ThreeDots" color="#00BFFF" height={80} width={80} />
+        }
+      >
+        <Switch>
+          <Route path="/" exact>
+            <HomeView />
+          </Route>
+
+          <Route path="/movies" exact>
+            <MoviesView />
+          </Route>
+
+          <Route path="/movies/:movieId">
+            <MovieView />
+          </Route>
+
+          <Route>
+            <NotFoundView />
+          </Route>
+        </Switch>
+      </Suspense>
+    </>
   );
 }
-
-export default App;
